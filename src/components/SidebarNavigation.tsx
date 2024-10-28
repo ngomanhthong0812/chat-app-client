@@ -9,6 +9,7 @@ const SidebarNavigation: React.FC<IProps> = () => {
                         {item.icon}
                     </div>
                 ))}
+                demo
             </div>
         </div>
     );
