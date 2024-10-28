@@ -38,3 +38,20 @@ body {
   margin: 20px 16px;
   text-align: center;
 }
+/* styles/scrollbar.css */
+::-webkit-scrollbar {
+  width: 4px; /* Đặt chiều rộng thanh cuộn */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888; /* Màu của thanh cuộn */
+  border-radius: 10px; /* Bo góc cho thanh cuộn */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Màu khi hover vào thanh cuộn */
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Màu nền của thanh cuộn */
+}
