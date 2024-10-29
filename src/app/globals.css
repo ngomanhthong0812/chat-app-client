@@ -38,3 +38,25 @@ body {
   margin: 20px 16px;
   text-align: center;
 }
+
+/* CSS tùy chỉnh để ẩn thanh cuộn */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  scrollbar-width: none;
+}
+
+/* CSS để tùy chỉnh thanh cuộn */
+.scrollbar-custom {
+  overflow-y: scroll;
+}
+
+.scrollbar-custom::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: rgba(71, 72, 75, 0.55);
+}

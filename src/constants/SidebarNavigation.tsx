@@ -4,29 +4,37 @@ import { IoStorefrontSharp } from "react-icons/io5";
 import { BsChatDotsFill } from "react-icons/bs";
 import { BsArchiveFill } from "react-icons/bs";
 
-export const SIDEBAR_NAV = [
+interface SidebarNavItem {
+    id: string;
+    name: string;
+    icon: JSX.Element;
+    active: boolean;
+}
+
+
+export const SIDEBAR_NAV: SidebarNavItem[] = [
     {
         id: uuid(),
         name: 'Đoạn chat',
-        icon: <BsChatFill size={19} />,
+        icon: <BsChatFill size={18} />,
         active: true,
     },
     {
         id: uuid(),
         name: 'Marketplace',
-        icon: <IoStorefrontSharp size={19} />,
+        icon: <IoStorefrontSharp size={18} />,
         active: false,
     },
     {
         id: uuid(),
         name: 'Tin nhắn đang chờ',
-        icon: <BsChatDotsFill size={19} />,
+        icon: <BsChatDotsFill size={18} />,
         active: false,
     },
     {
         id: uuid(),
         name: 'Đoạn chat đã lưu trữ',
-        icon: <BsArchiveFill size={19} />,
+        icon: <BsArchiveFill size={18} />,
         active: false,
     }
 ]
