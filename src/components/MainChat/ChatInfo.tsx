@@ -3,9 +3,9 @@ import { FaBell, FaUserCircle } from "react-icons/fa";
 import { IoSearch } from "react-icons/io5";
 import { IoIosArrowDown } from "react-icons/io";
 
-interface Props {}
+interface Props { }
 
-const ChatInfo: NextPage<Props> = ({}) => {
+const ChatInfo: NextPage<Props> = ({ }) => {
   return (
     <div className="">
       <div className="w-full text-white flex flex-col items-center text-center justify-center mt-5">
@@ -17,21 +17,21 @@ const ChatInfo: NextPage<Props> = ({}) => {
         <span className="text-[15px] font-bold leading-[19px] mt-2">Quang</span>
         <span className="text-[13px] text-[#b0b3b8]">Đang hoạt động</span>
 
-        <div className="flex gap-3 mt-5">
-          <div className="flex flex-col justify-center items-center text-center text-[13px] cursor-pointer text-[#b0b3b8] w-30">
-            <div className="bg-[#3e4042] p-2 rounded-full">
+        <div className="flex items-start gap-1 mt-5">
+          <div className="flex flex-col justify-center items-center text-center text-[12px] cursor-pointer text-[#b0b3b8] w-16">
+            <div className="bg-[#3e4042] text-[#dadada] p-2 rounded-full">
               <FaUserCircle size={20} />
             </div>
-            <span>Trang cá nhân</span>
+            <span className="whitespace-nowrap">Trang cá nhân</span>
           </div>
-          <div className="flex  flex-col justify-center items-center text-center text-[13px] cursor-pointer text-[#b0b3b8] w-30">
-            <div className="bg-[#3e4042] p-2 rounded-full">
+          <div className="flex flex-col justify-center items-center text-center text-[12px] cursor-pointer text-[#b0b3b8] w-16">
+            <div className="bg-[#3e4042] text-[#dadada] p-2 rounded-full">
               <FaBell size={20} />
             </div>
-            <span>Tắt thông báo</span>
+            <span className="leading-4">Tắt thông <br /> báo</span>
           </div>
-          <div className="flex flex-col justify-center items-center text-center text-[13px] cursor-pointer text-[#b0b3b8] w-30">
-            <div className="bg-[#3e4042] p-2 rounded-full">
+          <div className="flex flex-col justify-center items-center text-center text-[12px] cursor-pointer text-[#b0b3b8] w-16">
+            <div className="bg-[#3e4042] text-[#dadada] p-2 rounded-full">
               <IoSearch size={20} />
             </div>
             <span>Tìm kiếm</span>
@@ -40,25 +40,25 @@ const ChatInfo: NextPage<Props> = ({}) => {
         <div className="mt-5 text-start w-full px-4">
           <ul className="flex flex-col gap-3">
             <li className="flex items-center justify-between w-full hover:bg-[#3e4042] cursor-pointer p-3 rounded-md ">
-              <div className="font-medium ">Thông tin đoạn chat</div>
+              <div className="font-medium text-[15px] ">Thông tin đoạn chat</div>
               <div>
                 <IoIosArrowDown />
               </div>
             </li>
-            <li className="flex items-center justify-between w-full hover:bg-[#3e4042] cursor-pointer p-3 rounded-sm ">
-              <div className="font-medium ">Tùy chỉnh đoạn chat</div>
+            <li className="flex items-center justify-between w-full hover:bg-opacity-100 hover:bg-[#47484b] cursor-pointer p-3 rounded-md ">
+              <div className="font-medium text-[15px] ">Tùy chỉnh đoạn chat</div>
               <div>
                 <IoIosArrowDown />
               </div>
             </li>
-            <li className="flex items-center justify-between w-full hover:bg-[#3e4042] cursor-pointer p-3 rounded-sm ">
-              <div className="font-medium ">File phương tiện & flie</div>
+            <li className="flex items-center justify-between w-full hover:bg-opacity-100 hover:bg-[#47484b] cursor-pointer p-3 rounded-md ">
+              <div className="font-medium text-[15px] ">File phương tiện & flie</div>
               <div>
                 <IoIosArrowDown />
               </div>
             </li>
-            <li className="flex items-center justify-between w-full hover:bg-[#3e4042] cursor-pointer p-3 rounded-sm ">
-              <div className="font-medium ">Quyền riêng tư & hỗ trợ</div>
+            <li className="flex items-center justify-between w-full hover:bg-opacity-100 hover:bg-[#47484b] cursor-pointer p-3 rounded-md ">
+              <div className="font-medium text-[15px] ">Quyền riêng tư & hỗ trợ</div>
               <div>
                 <IoIosArrowDown />
               </div>

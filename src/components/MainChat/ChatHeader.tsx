@@ -27,20 +27,19 @@ const ChatHeader: NextPage<Props> = ({ toggleChatInfo }) => {
           <span className="text-[13px] text-[#b0b3b8]">Đang hoạt động</span>
         </div>
       </div>
-      <div className="text-[#aa00ff] flex gap-5">
-        <div className="w-8 h-8 hover:bg-[#3e4042] flex items-center justify-center rounded-full">
+      <div className="text-[#aa00ff] flex items-center gap-4">
+        <div className="w-8 h-8 hover:bg-[#3e4042] flex items-center justify-center rounded-full cursor-pointer">
           <FaPhoneAlt size={17} />
         </div>
-        <div className="w-8 h-8 hover:bg-[#3e4042] flex items-center justify-center rounded-full">
+        <div className="w-8 h-8 hover:bg-[#3e4042] flex items-center justify-center rounded-full cursor-pointer">
           <IoIosVideocam size={22} />
         </div>
         <div
-          className={`w-8 h-8 flex items-center justify-center rounded-full ${
-            isActive ? "bg-[#1877f2] text-[#3e4042]" : "hover:bg-[#3e4042]"
-          }`} // Áp dụng class tùy thuộc vào isActive
+          className={`flex items-center justify-center rounded-full cursor-pointer ${isActive ? "bg-[#aa00ff] text-[#3e4042] text-sm w-5 h-5" : "hover:bg-[#3e4042] text-xl w-7 h-7"
+            }`} // Áp dụng class tùy thuộc vào isActive
           onClick={handleToggle} // Gọi handleToggle
         >
-          <BsThreeDots size={22} />
+          <BsThreeDots />
         </div>
       </div>
     </div>

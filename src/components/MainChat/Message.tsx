@@ -18,13 +18,12 @@ const Message: NextPage<Props> = ({ text, imageUrl, sender, index }) => {
 
   return (
     <div
-      className={`flex items-center ${
-        sender === "me" ? "justify-end" : "justify-start"
-      } my-1 group`}
+      className={`flex items-center ${sender === "me" ? "justify-end" : "justify-start"
+        } my-1 group`}
     >
       {/* Chỉ hiển thị avatar nếu sender là "other" */}
       {sender === "other" && (
-        <div className="w-8 h-8 mr-2">
+        <div className="w-7 h-7 mr-2">
           <img
             src="/avatar-trang-4.jpg"
             alt="Avatar"
@@ -35,30 +34,27 @@ const Message: NextPage<Props> = ({ text, imageUrl, sender, index }) => {
       {sender === "me" && (
         <div className="">
           <div
-            className={`flex text-[#7d7676]  gap-2 mr-2 invisible group-hover:visible ${
-              sender === "me" ? "order-1 ml-2" : "order-2"
-            }`}
+            className={`flex text-[#dadada]  gap-2 mr-2 invisible group-hover:visible ${sender === "me" ? "order-1 ml-2" : "order-2"
+              }`}
           >
-            <div className="w-7 h-7 hover:bg-[#3e4042] flex items-center justify-center rounded-full">
-              <BsThreeDotsVertical size={20} />
+            <div className="w-7 h-7 bg-opacity-55 hover:bg-opacity-100 bg-[#47484b] cursor-pointer flex items-center justify-center rounded-full">
+              <BsThreeDotsVertical size={18} />
             </div>
-            <div className="w-7 h-7 hover:bg-[#3e4042] flex items-center justify-center rounded-full">
-              <BiSolidShare size={20} />
+            <div className="w-7 h-7 bg-opacity-55 hover:bg-opacity-100 bg-[#47484b] cursor-pointer flex items-center justify-center rounded-full">
+              <BiSolidShare size={18} />
             </div>
-            <div className="w-7 h-7 hover:bg-[#3e4042] flex items-center justify-center rounded-full">
-              <FaRegSmile size={20} />
+            <div className="w-7 h-7 bg-opacity-55 hover:bg-opacity-100 bg-[#47484b] cursor-pointer flex items-center justify-center rounded-full">
+              <FaRegSmile size={18} />
             </div>
           </div>
         </div>
       )}
       <div
-        className={`px-3 py-2 max-w-80 ${
-          isLongMessage ? "rounded-lg" : "rounded-full"
-        } ${
-          sender === "me"
+        className={`px-3 py-2 max-w-80 ${isLongMessage ? "rounded-lg" : "rounded-full"
+          } ${sender === "me"
             ? "bg-blue-500 text-white text-sm"
-            : "bg-[#4c4c4c] text-white text-sm"
-        }`}
+            : "bg-opacity-100 bg-[#47484b] text-white text-sm"
+          }`}
       >
         {text && <p>{text}</p>}
         {imageUrl && (
@@ -68,18 +64,17 @@ const Message: NextPage<Props> = ({ text, imageUrl, sender, index }) => {
 
       {sender === "other" && (
         <div
-          className={`flex text-[#7d7676] gap-2 ml-2 invisible group-hover:visible ${
-            sender === "me" ? "order-1 ml-2" : "order-2"
-          }`}
+          className={`flex text-[#dadada] gap-2 ml-2 invisible group-hover:visible ${sender === "me" ? "order-1 ml-2" : "order-2"
+            }`}
         >
-          <div className="w-7 h-7 hover:bg-[#3e4042] flex items-center justify-center rounded-full">
-            <FaRegSmile size={20} />
+          <div className="w-7 h-7 bg-opacity-55 hover:bg-opacity-100 bg-[#47484b] cursor-pointer flex items-center justify-center rounded-full">
+            <FaRegSmile size={18} />
           </div>
-          <div className="w-7 h-7 hover:bg-[#3e4042] flex items-center justify-center rounded-full">
-            <IoIosShareAlt size={20} />
+          <div className="w-7 h-7 bg-opacity-55 hover:bg-opacity-100 bg-[#47484b] cursor-pointer flex items-center justify-center rounded-full">
+            <BiSolidShare size={18} />
           </div>
-          <div className="w-7 h-7 hover:bg-[#3e4042] flex items-center justify-center rounded-full">
-            <BsThreeDotsVertical size={20} />
+          <div className="w-7 h-7 bg-opacity-55 hover:bg-opacity-100 bg-[#47484b] cursor-pointer flex items-center justify-center rounded-full">
+            <BsThreeDotsVertical size={18} />
           </div>
         </div>
       )}

@@ -38,20 +38,25 @@ body {
   margin: 20px 16px;
   text-align: center;
 }
-/* styles/scrollbar.css */
-::-webkit-scrollbar {
-  width: 4px; /* Đặt chiều rộng thanh cuộn */
+
+/* CSS tùy chỉnh để ẩn thanh cuộn */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-::-webkit-scrollbar-thumb {
-  background: #888; /* Màu của thanh cuộn */
-  border-radius: 10px; /* Bo góc cho thanh cuộn */
+.hide-scrollbar {
+  scrollbar-width: none;
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #555; /* Màu khi hover vào thanh cuộn */
+/* CSS để tùy chỉnh thanh cuộn */
+.scrollbar-custom {
+  overflow-y: scroll;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent; /* Màu nền của thanh cuộn */
+.scrollbar-custom::-webkit-scrollbar {
+  width: 10px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: rgba(71, 72, 75, 0.55);
 }

@@ -1,37 +1,32 @@
-import { NextPage } from "next";
+"use client"
+import { useState } from "react";
 import ChatItem from "./ChatItem";
 
-interface ChatData {
-  id: number;
-  name: string;
-  message: string;
-  avatar: string;
-}
+interface IProps { }
+const ChatList: React.FC<IProps> = () => {
+  const [onScroll, setOnScroll] = useState<boolean>(false);
 
-const chatItems: ChatData[] = [
-  {
-    id: 1,
-    name: "Quang",
-    message: "cặc cặc cặc cặc cặc",
-    avatar: "/avatar-trang-4.jpg",
-  },
- ];
-
-const ChatList: NextPage = () => {
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop } = event.currentTarget;
+    if (scrollTop > 0) {
+      setOnScroll(true); // Đã cuộn tới đầu
+    } else {
+      setOnScroll(false); // Đang cuộn
+    }
+  }
   return (
-    <div className="h-[510px] overflow-y-auto mt-1">
-      {" "}
-      {/* Đặt chiều cao cụ thể */}
-      {chatItems.map((item) => (
-        <ChatItem
-          key={item.id}
-          name={item.name}
-          message={item.message}
-          avatar={item.avatar}
-        />
-      ))}
+    <div className={`mt-3 px-2 h-full scrollbar-custom ${onScroll && 'border-t border-[#484848]'}`}
+      onScroll={handleScroll}>
+      <ChatItem />
+      <ChatItem />
+      <ChatItem />
+      <ChatItem />
+      <ChatItem />
+      <ChatItem />
+      <ChatItem />
+
     </div>
   );
-};
-
+}
 export default ChatList;
+
