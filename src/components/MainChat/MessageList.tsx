@@ -31,7 +31,7 @@ const MessageList: NextPage<Props> = ({ messages = [], toggleChatInfo }) => {
           />
         ))}
       </div>
-        <MessageInput />
+      <MessageInput />
     </div>
   );
 };
