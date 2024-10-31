@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react";
 import ChatItem from "./ChatItem";
+import { SkeletonChat } from "../SkeletonChat";
 
 interface IProps { }
 const ChatList: React.FC<IProps> = () => {
@@ -17,6 +18,7 @@ const ChatList: React.FC<IProps> = () => {
   return (
     <div className={`mt-3 px-2 h-full scrollbar-custom ${onScroll && 'border-t border-[#484848]'}`}
       onScroll={handleScroll}>
+      <SkeletonChat />
       <ChatItem />
       <ChatItem />
       <ChatItem />

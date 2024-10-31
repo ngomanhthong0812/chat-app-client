@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { redirect } from 'next/navigation'
 
 import ChatList from "../components/Sidebar/ChatList";
 import SearchBar from "../components/Sidebar/SearchBar";
@@ -36,6 +37,14 @@ const messages = [
 const Home = () => {
   const [isChatInfoVisible, setChatInfoVisible] = useState(false);
   const [isSidebarExpanded, setIsSidebarExpanded] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      redirect('/login');
+    }
+  }, []);
 
   const toggleChatInfo = () => {
     setChatInfoVisible(!isChatInfoVisible);
