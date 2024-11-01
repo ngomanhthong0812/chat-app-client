@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import Footer from "@/src/components/app.footer";
 import Link from "next/link";
@@ -6,22 +6,22 @@ import Link from "next/link";
 import { NextPage } from "next";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
-import { redirect } from 'next/navigation'
+import { redirect } from "next/navigation";
 
 import BounceLoader from "react-spinners/BounceLoader";
 
-interface Props { }
+interface Props {}
 
-const PageLogin: NextPage<Props> = ({ }) => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+const PageLogin: NextPage<Props> = ({}) => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
 
     if (token) {
-      redirect('/');
+      redirect("/");
     }
   }, []);
 
@@ -29,17 +29,20 @@ const PageLogin: NextPage<Props> = ({ }) => {
     let isLogin: boolean = false;
     setLoading(true);
     try {
-      const response = await axios.post('http://localhost:8080/api/login', data);
+      const response = await axios.post(
+        "http://localhost:8080/api/login",
+        data
+      );
       isLogin = true;
       const token = response?.data.token;
-      localStorage.setItem('token', token);
+      localStorage.setItem("token", token);
     } catch (error) {
       const axiosError = error as AxiosError;
       console.error(axiosError.response?.data);
       isLogin = false;
     } finally {
       if (isLogin) {
-        redirect('/');
+        redirect("/");
       }
       setLoading(false);
     }
@@ -81,7 +84,7 @@ const PageLogin: NextPage<Props> = ({ }) => {
                       placeholder="Email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      autoComplete='current-email'
+                      autoComplete="current-email"
                     />
                   </div>
                   <div className="input-z my-[6px]">
@@ -99,7 +102,7 @@ const PageLogin: NextPage<Props> = ({ }) => {
                     className="bg-[#0866ff] w-full py-2 rounded-md text-white font-bold text-lg mt-2 flex items-center justify-center"
                     disabled={loading}
                   >
-                    {loading ?
+                    {loading ? (
                       <div className="h-full">
                         <BounceLoader
                           color="#ffffff"
@@ -108,9 +111,9 @@ const PageLogin: NextPage<Props> = ({ }) => {
                           data-testid="loader"
                         />
                       </div>
-                      :
-                      'Đăng nhập'
-                    }
+                    ) : (
+                      "Đăng nhập"
+                    )}
                   </button>
                 </form>
                 <Link
