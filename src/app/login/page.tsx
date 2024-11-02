@@ -6,48 +6,87 @@ import Link from "next/link";
 import { NextPage } from "next";
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
-import { redirect } from 'next/navigation'
+import { useRouter } from "next/navigation";
 
 import BounceLoader from "react-spinners/BounceLoader";
 
 interface Props { }
 
+interface LoginData {
+  email: string;
+  password: string;
+}
+
 const PageLogin: NextPage<Props> = ({ }) => {
+  const router = useRouter();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | boolean>('');
 
   useEffect(() => {
     const token = localStorage.getItem('token');
 
     if (token) {
-      redirect('/');
+      router.push('/');
     }
   }, []);
 
-  const handleSubmit = async (data: object) => {
-    let isLogin: boolean = false;
+
+  function validateEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  function validateLoginInput(data: LoginData): string | boolean {
+    if (!data.email || !data.password) {
+      return "Vui lòng nhập đầy đủ email và mật khẩu"
+    }
+    if (!validateEmail(data.email)) {
+      return "Email không hợp lệ"
+    }
+    if (data.password.length < 6) {
+      return "Mật khẩu phải chứa ít nhất 6 ký tự"
+    }
+
+    return true;
+  }
+
+  const handleSubmit = async (data: LoginData) => {
     setLoading(true);
-    try {
-      const response = await axios.post('http://localhost:8080/api/login', data);
-      isLogin = true;
-      const token = response?.data.token;
-      localStorage.setItem('token', token);
-    } catch (error) {
-      const axiosError = error as AxiosError;
-      console.error(axiosError.response?.data);
-      isLogin = false;
-    } finally {
-      if (isLogin) {
-        redirect('/');
+    if (validateLoginInput(data) === true) {
+      try {
+        const response = await axios.post('http://localhost:8080/api/login', data);
+        const token = response?.data.token;
+        const userId = response?.data.userId;
+        if (token && userId) {
+          setIsLogin(true);
+          router.push('/');
+          localStorage.setItem('token', token);
+          localStorage.setItem('userId', userId);
+        }
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response?.data) {
+          const responseData = error.response.data;
+          setError(responseData.msg || "Đã xảy ra lỗi không xác định");
+        } else {
+          setError("Đã xảy ra lỗi không xác định");
+        }
+        setIsLogin(false);
+        setLoading(false);
       }
+
+    } else {
+      setError(validateLoginInput(data));
       setLoading(false);
     }
   };
 
   const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const data = { email, password };
+    const iEmail: string = email.trim();
+    const data: LoginData = { email: iEmail, password };
     handleSubmit(data);
   };
 
@@ -74,9 +113,9 @@ const PageLogin: NextPage<Props> = ({ }) => {
             <div className=" w-[85%] h-auto flex flex-col box-shadow rounded-md bg-white">
               <div className="p-4 flex flex-col  ">
                 <form action="" onSubmit={handleFormSubmit}>
-                  <div className="input-z mb-3 ">
+                  <div className="input-z mb-3 py-2">
                     <input
-                      className="flex items-start border-0 outline-none px-4 py-[14px]"
+                      className="flex w-full items-start border-0 outline-none px-4 py-1"
                       type="text"
                       placeholder="Email"
                       value={email}
@@ -84,9 +123,9 @@ const PageLogin: NextPage<Props> = ({ }) => {
                       autoComplete='current-email'
                     />
                   </div>
-                  <div className="input-z my-[6px]">
+                  <div className="input-z  py-2">
                     <input
-                      className="flex items-start border-0 outline-none px-4 py-[14px]"
+                      className="flex w-full items-start border-0 outline-none px-4 py-1"
                       type="password"
                       placeholder="Mật khẩu"
                       value={password}
@@ -94,9 +133,10 @@ const PageLogin: NextPage<Props> = ({ }) => {
                       autoComplete="current-password"
                     />
                   </div>
+                  <div className="text-red-500 text-sm text-start px-2 mt-2">{error}</div>
                   {/*  */}
                   <button
-                    className="bg-[#0866ff] w-full py-2 rounded-md text-white font-bold text-lg mt-2 flex items-center justify-center"
+                    className="bg-[#0866ff] w-full min-h-[45px] rounded-md text-white font-bold text-lg mt-3 flex items-center justify-center"
                     disabled={loading}
                   >
                     {loading ?
