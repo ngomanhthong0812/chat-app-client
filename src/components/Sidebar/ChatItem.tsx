@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { SlOptions } from "react-icons/sl";
 
 import axios from "axios";
+import useUser from "@/src/hook/useUser";
 
 const ChatItem: React.FC<ChatItemType> = ({
   id, // => id message
@@ -21,28 +22,27 @@ const ChatItem: React.FC<ChatItemType> = ({
   sender_first_name,
   handleSetLoading }) => {
 
-  // lấy ra id người dùng
-  const userId: string | number | null = localStorage.getItem('userId')
-    ? JSON.parse(localStorage.getItem('userId') as string)
-    : null;
+  // lấy ra thông tin người dùng
+  const user = useUser();
+
   const [activeStatus, setActiveStatus] = useState<boolean>(true);
 
   const timeSentAt = calculateTimeDifference(sent_at);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user) return; 
       try {
         if (chat_id) {
           const response = await axios.post('http://localhost:8080/api/activeStatusChat', {
             chat_id: chat_id,
-            user_id: userId,
+            user_id: user?.user_id,
           });
-          console.log(user_id + response.data);
           setActiveStatus(response.data.status);
         } else {
           const response = await axios.post('http://localhost:8080/api/activeStatusGroup', {
             group_id: group_id,
-            user_id: userId,
+            user_id: user?.user_id,
           });
           console.log(user_id + response.data);
           setActiveStatus(response.data.status);
@@ -55,7 +55,7 @@ const ChatItem: React.FC<ChatItemType> = ({
       }
     }
     fetchData();
-  }, [])
+  }, [user])
 
   function calculateTimeDifference(pastDateStr: string): string {
     const pastDate: any = new Date(pastDateStr);
@@ -118,7 +118,7 @@ const ChatItem: React.FC<ChatItemType> = ({
           <h3 className="text-white font-[500] text-[15px] truncate max-w-[300px]">{chat_name}</h3>
           <div className="text-[12.5px] font-[500] text-[#b0b3b8] flex">
             <p className="truncate max-w-[300px]">
-              {user_id === userId ? 'Bạn' : sender_last_name}: {
+              {user_id === user?.user_id ? 'Bạn' : sender_last_name}: {
                 content ? content : video_url
               }
             </p>

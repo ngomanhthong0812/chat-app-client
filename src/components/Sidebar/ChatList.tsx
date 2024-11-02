@@ -1,22 +1,24 @@
 "use client"
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ChatItem from "./ChatItem";
 import { SkeletonChat } from "../SkeletonChat";
 import axios from "axios";
+import useUser from "@/src/hook/useUser";
 
 interface IProps { }
-
 
 const ChatList: React.FC<IProps> = () => {
   const [onScroll, setOnScroll] = useState<boolean>(false);
   const [chatList, setChatList] = useState<ChatItemType[]>();
   const [loading, setLoading] = useState<boolean>(true);
-  const userId = localStorage.getItem('userId');
+
+  const user = useUser();
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!user) return;
       const data: object = {
-        user_id: userId
+        user_id: user?.user_id
       };
 
       try {
@@ -27,14 +29,10 @@ const ChatList: React.FC<IProps> = () => {
           const responseData = error.response.data;
           console.log(responseData);
         }
-      } finally {
-        setInterval(() => {
-          setLoading(false);
-        }, 1000)
       }
     };
     fetchData();
-  }, [])
+  }, [user])
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop } = event.currentTarget;
@@ -46,7 +44,7 @@ const ChatList: React.FC<IProps> = () => {
   }
   const handleSetLoading = () => {
     console.log("tai thanh cong");
-    setLoading(true);
+    setLoading(false);
   }
   return (
     <div className={`mt-3 px-2 h-full scrollbar-custom ${onScroll && 'border-t border-[#484848]'}`}
@@ -65,7 +63,7 @@ const ChatList: React.FC<IProps> = () => {
       </div>}
 
       {chatList?.map((chat: ChatItemType) => (
-        <div key={chat.id} className={`${!loading ? 'visible' : 'invisible'}`}>
+        <div key={chat.id} style={!loading ? { visibility: 'visible' } : { visibility: 'hidden' }}>
           <ChatItem
             avatar_url={chat.avatar_url}
             chat_name={chat.chat_name}

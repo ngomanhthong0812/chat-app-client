@@ -18,7 +18,12 @@ const Register: NextPage<Props> = () => {
   const [birthYear, setBirthYear] = useState<number>(2024);
   const [gender, setGender] = useState<string>("male");
   const [error, setError] = useState<string>(""); // State để lưu thông báo lỗi
-  const [successMessage, setSuccessMessage] = useState<string>(""); // State để lưu thông báo thành công
+  const [successMessage, setSuccessMessage] = useState<string>("");
+  const [errorEmail, setErrorEmail] = useState<Boolean>(false);
+  const [successEmail, setSuccessEmail] = useState<string>("");
+
+  const [errorPass, seterrorPass] = useState<Boolean>(false);
+  const [successPass, setSuccessPass] = useState<string>("");
 
   // Hàm xử lý khi bấm nút Đăng ký
   const handleSubmit = async (event: React.FormEvent) => {
@@ -27,16 +32,34 @@ const Register: NextPage<Props> = () => {
     // Kiểm tra xem các trường đã được điền đầy đủ chưa
     if (!firstName || !lastName || !email || !password) {
       setError("Vui lòng nhập đầy đủ thông tin.");
+      setErrorEmail(false);
       return;
+    } else {
+      setError("");
+      // Kiểm tra định dạng email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        setSuccessEmail("Email không hợp lệ.");
+        setErrorEmail(true);
+        return;
+      } else {
+        // Đặt lại trạng thái lỗi email nếu hợp lệ
+        setErrorEmail(false);
+        setSuccessEmail("");
+      }
+
+      // Kiểm tra độ dài mật khẩu
+      if (password.length < 6) {
+        setSuccessPass("Mật khẩu phải có ít nhất 6 ký tự.");
+        seterrorPass(true);
+        return;
+      } else {
+        // Đặt lại trạng thái lỗi mật khẩu nếu hợp lệ
+        seterrorPass(false);
+        setSuccessPass("");
+      }
     }
-    // Nếu tất cả đều hợp lệ, log thông tin
-    // console.log("Họ:", firstName);
-    // console.log("Tên:", lastName);
-    // console.log("Email:", email);
-    // console.log("Mật khẩu:", password);
-    // console.log("Ngày sinh:", `${birthDay}/${birthMonth}/${birthYear}`);
-    // console.log("Giới tính:", gender);
-    //
+
     const requestData = {
       first_name: firstName,
       last_name: lastName,
@@ -51,33 +74,31 @@ const Register: NextPage<Props> = () => {
     console.log(requestData);
 
     try {
-      // Gửi yêu cầu PUT tới API
       const response = await fetch("http://localhost:8080/api/register", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(requestData), // Sử dụng dữ liệu động từ form
+        body: JSON.stringify(requestData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        setError(errorData.message || "Có lỗi xảy ra. Vui lòng thử lại.");
+        if (response.status === 400) {
+          setErrorEmail(true);
+          setSuccessEmail("Email đã tồn tại. Vui lòng thử một email khác.");
+        } else {
+          setError(errorData.message || "Có lỗi xảy ra. Vui lòng thử lại.");
+        }
         setSuccessMessage("");
-        console.log("Có lỗi xảy ra. Vui lòng thử lại.");
       } else {
-        const data = await response.json();
-        console.log(data); // Xử lý phản hồi từ API
         setSuccessMessage("Đăng ký thành công!");
         setError("");
-        console.log("Đăng ký thành công!");
-        // Chuyển hướng về trang đăng nhập
-
-        router.push("/"); // Đường dẫn tới trang đăng nhập
+        router.push("/");
       }
     } catch (error) {
       setError("Có lỗi xảy ra. Vui lòng thử lại.");
-      console.error("Có lỗi xảy ra. Vui lòng thử lại. : ", error);
+      console.error("Có lỗi xảy ra. Vui lòng thử lại: ", error);
     }
   };
 
@@ -100,13 +121,13 @@ const Register: NextPage<Props> = () => {
             </h2>
           </div>
           <div className="p-4">
-            {error && <div className="text-red-500 text-sm mb-4">{error}</div>}{" "}
+            {error && <div className="text-red-500 text-sm mb-4">{error}</div>}
             {/* Hiển thị thông báo lỗi */}
             {successMessage && (
               <div className="text-green-500 text-sm mb-4">
                 {successMessage}
               </div>
-            )}{" "}
+            )}
             {/* Hiển thị thông báo thành công */}
             <div className="flex gap-2">
               <div className="border w-2/3 rounded">
@@ -219,25 +240,48 @@ const Register: NextPage<Props> = () => {
               </div>
             </div>
             {/* Số di động hoặc Email */}
-            <div className="mt-4 border rounded">
+            <div
+              className={`${
+                errorEmail ? "border-red-500" : "border-gray-300"
+              } mt-4 border rounded`}
+            >
               <input
                 type="email"
-                className="w-full p-[8px]"
+                className="w-full p-[8px] border-none"
                 placeholder="Số di động hoặc Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)} // Cập nhật giá trị
               />
             </div>
+            {/* báo lỗi */}
+
+            {errorEmail && (
+              <div className="text-red-500 text-xs mt-1 flex text-start">
+                {successEmail}
+              </div>
+            )}
+
             {/* Mật khẩu mới */}
-            <div className="mt-4 border rounded">
+            <div
+              className={`${errorPass ? "border-red-500" : "border-gray-300"} ${
+                errorEmail ? "mt-1 " : "mt-4"
+              } border rounded`}
+            >
               <input
                 type="password" // Đổi sang type password
-                className="w-full p-[8px]"
+                className="w-full p-[8px] border-none"
                 placeholder="Mật khẩu mới"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)} // Cập nhật giá trị
               />
             </div>
+            {/* báo lỗi */}
+
+            {errorPass && (
+              <div className="text-red-500 text-xs mt-1 flex text-start">
+                {successPass}
+              </div>
+            )}
             {/* Thông báo điều khoản */}
             <div className="flex text-start flex-col">
               <p className="mt-3 text-xs text-[#777]">

@@ -16,3 +16,10 @@ interface ChatItemType {
     sender_first_name: string;
     handleSetLoading: () => void;
 }
+
+interface User {
+    user_id: number;
+    avatar_url: string;
+    first_name: string;
+    last_name: string;
+}

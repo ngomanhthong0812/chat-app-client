@@ -19,6 +19,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu"
+import useUser from "@/src/hook/useUser";
 
 interface IProps {
     toggleSidebar: () => void,
@@ -27,13 +28,16 @@ interface IProps {
 
 const AccountOptions: React.FC<IProps> = ({ toggleSidebar, isSidebarExpanded }) => {
     const router = useRouter();
+
+    const user = useUser();
+
     const handleLogout = async () => {
         const response = await axios.post('http://localhost:8080/api/logout');
 
         if (response.status === 200) {
             router.push('/login');
             localStorage.removeItem('token');
-            localStorage.removeItem('userId');
+            localStorage.removeItem('user');
         } else {
             const error = await response.data.json();
             console.error(error.message);
@@ -46,7 +50,7 @@ const AccountOptions: React.FC<IProps> = ({ toggleSidebar, isSidebarExpanded }) 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <button>
-                            <img src="https://scontent.fhan14-4.fna.fbcdn.net/v/t1.6435-1/65838514_835314680203196_7493673885099884544_n.jpg?stp=dst-jpg_s100x100&_nc_cat=107&ccb=1-7&_nc_sid=0ecb9b&_nc_eui2=AeFaMvcULFQuK01VrdXVgfpAcesKwMaWrIpx6wrAxpasipl8NbrGgyA6DO_SVaeBzvc-qjJqLPvl_OTor9f7gDeM&_nc_ohc=4-m2KeWfxiAQ7kNvgHTa6LT&_nc_ad=z-m&_nc_cid=0&_nc_zt=24&_nc_ht=scontent.fhan14-4.fna&_nc_gid=AFcJANj2morSo1gZiJ9uWTJ&oh=00_AYDGewQKyHE2KtjbJr4MA0AHv0DOvxAgiZhKEEn0_8SxFQ&oe=6746C834" alt=""
+                            <img src={user?.avatar_url} alt={user?.last_name}
                                 className="flex w-[32px] h-[32px] object-cover rounded-full cursor-pointer" />
                         </button>
                     </DropdownMenuTrigger>
@@ -75,7 +79,7 @@ const AccountOptions: React.FC<IProps> = ({ toggleSidebar, isSidebarExpanded }) 
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-                {isSidebarExpanded && <span className="text-[15px] font-medium leading-[19px] text-white">Thông</span>}
+                {isSidebarExpanded && <span className="text-[15px] font-medium leading-[19px] text-white">{user?.last_name}</span>}
             </div>
             <div
                 className="flex w-[34px] h-[34px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-75 hover:bg-opacity-100"

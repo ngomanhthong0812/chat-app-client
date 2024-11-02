@@ -21,7 +21,6 @@ const PageLogin: NextPage<Props> = ({ }) => {
   const router = useRouter();
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [isLogin, setIsLogin] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | boolean>('');
 
@@ -59,12 +58,11 @@ const PageLogin: NextPage<Props> = ({ }) => {
       try {
         const response = await axios.post('http://localhost:8080/api/login', data);
         const token = response?.data.token;
-        const userId = response?.data.userId;
-        if (token && userId) {
-          setIsLogin(true);
+        const user = response?.data.user;
+        if (token && user) {
           router.push('/');
           localStorage.setItem('token', token);
-          localStorage.setItem('userId', userId);
+          localStorage.setItem('user', JSON.stringify(user));
         }
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.data) {
@@ -73,7 +71,6 @@ const PageLogin: NextPage<Props> = ({ }) => {
         } else {
           setError("Đã xảy ra lỗi không xác định");
         }
-        setIsLogin(false);
         setLoading(false);
       }
 
