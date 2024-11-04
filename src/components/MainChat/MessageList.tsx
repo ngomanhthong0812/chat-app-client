@@ -24,26 +24,23 @@ interface Props {
 
 const MessageList: NextPage<Props> = ({ toggleChatInfo }) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
-  const [messages, setMessages] = useState<MessageData[]>([]); // Khởi tạo messages là mảng rỗng
-  const [currentUserId, setCurrentUserId] = useState<number | null>(null); // Khởi tạo currentUserId
+  const [messages, setMessages] = useState<MessageData[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [roomName, setRoomName] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const userId = getUserIdFromToken();
+
   // Fetch messages from the API
   useEffect(() => {
-    const token = localStorage.getItem("token"); // Lấy token từ local storage
+    const token = localStorage.getItem("token");
     if (token) {
-      // Giải mã để lấy user_id
-      setCurrentUserId(userId); // Lưu vào state
+      setCurrentUserId(userId);
     }
-    const id_other = userId != 1 ? "1" : "2";
-    console.log("other: " + id_other);
 
     const fetchMessages = async () => {
       try {
-        const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:8080/api/messager/1/${id_other}`,
+          `http://localhost:8080/api/messager/1`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -51,22 +48,29 @@ const MessageList: NextPage<Props> = ({ toggleChatInfo }) => {
           }
         );
 
-        console.log("API Response:", response.data); // In ra phản hồi từ API
+        console.log("API Response:", response.data);
 
-        // Kiểm tra nếu dữ liệu có thuộc tính `data` và thuộc tính `message` là một mảng
+        const { users, message } = response.data.data;
+
+        // Kiểm tra cấu trúc dữ liệu
         if (
           response.data.code === 200 &&
-          Array.isArray(response.data.data.message)
+          Array.isArray(message) &&
+          Array.isArray(users)
         ) {
-          setRoomName(response.data.data.name_room);
-          setAvatarUrl(response.data.data.avatar_url);
-          setMessages(response.data.data.message); // Lấy mảng message từ dữ liệu
+          if (users.length > 0) {
+            // Lấy tên phòng từ tên người dùng (có thể thay đổi tùy theo yêu cầu)
+            const user = users[0];
+            setRoomName(`${user.first_name} ${user.last_name}`);
+            setAvatarUrl(user.avatar_url);
+          }
+          setMessages(message); // Lưu lại mảng message từ dữ liệu
         } else {
           console.warn(
             "Expected an array for messages, received:",
             response.data
           );
-          setMessages([]); // Hoặc thiết lập một mảng mặc định
+          setMessages([]);
         }
       } catch (error) {
         console.error("Error fetching messages:", error);
@@ -74,7 +78,7 @@ const MessageList: NextPage<Props> = ({ toggleChatInfo }) => {
     };
 
     fetchMessages();
-  }, []);
+  }, [userId]); // Thêm userId vào dependencies
 
   // Scroll to the bottom when messages change
   useEffect(() => {
@@ -92,15 +96,15 @@ const MessageList: NextPage<Props> = ({ toggleChatInfo }) => {
         {messages.map((message) => (
           <Message
             key={message.message_id}
-            user_id={message.user_id} // Thêm user_id
-            sender_name={message.sender_name} // Thêm sender_name
-            message_id={message.message_id} // Thêm message_id
-            message_content={message.message_content} // Thêm message_content
-            message_sent_at={message.message_sent_at} // Thêm message_sent_at
-            message_image_url={message.message_image_url} // Thêm message_image_url
-            message_video_url={message.message_video_url} // Thêm message_video_url
-            message_file_url={message.message_file_url} // Thêm message_file_url
-            currentUserId={currentUserId} // Truyền currentUserId vào Message
+            user_id={message.user_id}
+            sender_name={message.sender_name}
+            message_id={message.message_id}
+            message_content={message.message_content}
+            message_sent_at={message.message_sent_at}
+            message_image_url={message.message_image_url}
+            message_video_url={message.message_video_url}
+            message_file_url={message.message_file_url}
+            currentUserId={currentUserId}
             avatar_url={message.avatar_url}
           />
         ))}
