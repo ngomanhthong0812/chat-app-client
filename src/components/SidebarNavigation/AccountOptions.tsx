@@ -2,8 +2,6 @@ import { TiThListOutline } from "react-icons/ti";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import {
-    CreditCard,
-    Keyboard,
     LifeBuoy,
     LogOut,
     Settings,
@@ -15,7 +13,6 @@ import {
     DropdownMenuContent,
     DropdownMenuGroup,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/src/components/ui/dropdown-menu"
@@ -54,27 +51,37 @@ const AccountOptions: React.FC<IProps> = ({ toggleSidebar, isSidebarExpanded }) 
                                 className="flex w-[32px] h-[32px] object-cover rounded-full cursor-pointer" />
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className="w-56 z-[999] ml-5">
+                    <DropdownMenuContent className="w-80 z-[999] bg-[#272727] border-none text-white text-[15px] ml-5">
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <User />
+                            <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+                                <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                                    <User />
+                                </div>
                                 <span>Thông tin tài khoản</span>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Settings />
+                            <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+                                <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                                    <Settings />
+                                </div>
                                 <span>Tuỳ chọn</span>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem>
-                            <LifeBuoy />
+
+                        <DropdownMenuSeparator className="bg-[#47484b] bg-opacity-55" />
+
+                        <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+                            <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                                <LifeBuoy />
+                            </div>
                             <span>Hổ trợ</span>
                         </DropdownMenuItem>
 
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator className="bg-[#47484b] bg-opacity-55" />
 
-                        <DropdownMenuItem onClick={handleLogout}>
-                            <LogOut />
+                        <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white" onClick={handleLogout}>
+                            <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                                <LogOut />
+                            </div>
                             <span>Đăng xuất</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>

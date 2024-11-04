@@ -18,7 +18,7 @@ interface ChatItemType {
     participants_avatar_url: string;
     active: boolean;
     handleSetLoading: () => void;
-    handleActiveItem: (msg_id: number) => void;
+    handleActiveItem: (msg_id: number, chat_id: number | null, group_id: number | null) => void;
 }
 
 interface User {

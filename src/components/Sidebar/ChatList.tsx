@@ -5,12 +5,15 @@ import { SkeletonChat } from "../SkeletonChat";
 import axios from "axios";
 import useUser from "@/src/hook/useUser";
 
+import { useActiveChat } from '@/src/context/ActiveChatContext';
+
 interface IProps { }
 
 const ChatList: React.FC<IProps> = () => {
   const [onScroll, setOnScroll] = useState<boolean>(false);
   const [chatList, setChatList] = useState<ChatItemType[]>();
   const [loading, setLoading] = useState<boolean>(true);
+  const { setChatId, setGroupId } = useActiveChat();
 
   const user = useUser();
 
@@ -58,17 +61,21 @@ const ChatList: React.FC<IProps> = () => {
     console.log("tai thanh cong");
     setLoading(false);
   }
-  const handleActiveItem = (msg_id: number) => {
+  const handleActiveItem = (msg_id: number, chat_id: number | null, group_id: number | null) => {
     setChatList(
       prev => {
         return prev?.map(item => (
           item.id === msg_id
             ? { ...item, active: true }
             : { ...item, active: false }
-        ))
+        ));
       }
-    )
+    );
+
+    setChatId(chat_id);
+    setGroupId(group_id);
   }
+
   return (
     <div className={`mt-3 px-2 h-full scrollbar-custom ${onScroll && 'border-t border-[#484848]'}`}
       onScroll={handleScroll}>

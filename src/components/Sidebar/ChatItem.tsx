@@ -4,8 +4,30 @@ import { CiImageOn } from "react-icons/ci";
 import { LuFileVideo } from "react-icons/lu";
 import { CiFileOn } from "react-icons/ci";
 
+import {
+  Archive,
+  Bell,
+  CircleMinus,
+  MailWarning,
+  Phone,
+  Trash,
+  TriangleAlert,
+  User,
+  Video,
+} from "lucide-react"
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/src/components/ui/dropdown-menu"
+
 import axios from "axios";
 import useUser from "@/src/hook/useUser";
+import { useActiveChat } from '@/src/context/ActiveChatContext';
 
 const ChatItem: React.FC<ChatItemType> = ({
   id, // => id message
@@ -33,8 +55,16 @@ const ChatItem: React.FC<ChatItemType> = ({
   const user = useUser();
 
   const [activeStatus, setActiveStatus] = useState<boolean>(true);
+  const [isDropdownMenu, setIsDropdownMenu] = useState<boolean>(false);
+  const { chatId, groupId } = useActiveChat();
 
   const timeSentAt = calculateTimeDifference(sent_at);
+
+  useEffect(() => {
+    console.log(chatId);
+    console.log(groupId);
+
+  }, [chatId, groupId]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -95,27 +125,27 @@ const ChatItem: React.FC<ChatItemType> = ({
 
   const setViewContent = (): JSX.Element => {
     if (image_url && content) {
-      return <div className="flex gap-1"> <CiImageOn size={17} />{content}</div>
+      return <span className="flex gap-1"> <CiImageOn size={17} />{content}</span>
     }
     if (content) {
-      return <div className="flex gap-1">{content}</div>
+      return <span className="flex gap-1">{content}</span>
     }
     if (image_url) {
-      return <div className="flex gap-1"><CiImageOn size={17} /> Hình ảnh</div>
+      return <span className="flex gap-1"><CiImageOn size={17} /> Hình ảnh</span>
     }
     if (video_url) {
-      return <div className="flex gap-1"><LuFileVideo size={17} /> Video</div>
+      return <span className="flex gap-1"><LuFileVideo size={17} /> Video</span>
     }
     if (file_url) {
-      return <div className="flex gap-1"><CiFileOn size={17} /> File</div>
+      return <span className="flex gap-1"><CiFileOn size={17} /> File</span>
     }
     return (
-      <div></div>
+      <span></span>
     );
   }
 
   return (
-    <div onClick={() => handleActiveItem(id)}>
+    <div onClick={() => handleActiveItem(id, chat_id, group_id)}>
       <div className={`group relative rounded-lg flex px-2 py-[10px] gap-2 cursor-pointer
          ${active ? 'bg-[#47484b] bg-opacity-55' : 'hover:bg-opacity-100 hover:bg-[#47484b]'}
          `}>
@@ -138,10 +168,80 @@ const ChatItem: React.FC<ChatItemType> = ({
             </p>
             <span className="ml-1">. {timeSentAt}</span></div>
         </div>
-        <div className="group-hover:visible invisible hover:bg-[#47484b] bg-opacity-55 btn-options absolute right-8 top-[50%] translate-y-[-50%] w-[30px] h-[30px] flex items-center justify-center rounded-full text-[#b0b3b8] cursor-pointer bg-[#252323]"
-          style={{ boxShadow: '0 0 2px white' }}>
-          <SlOptions size={13} />
-        </div>
+        <DropdownMenu onOpenChange={() => setIsDropdownMenu(!isDropdownMenu)}>
+          <DropdownMenuTrigger asChild>
+            <button
+              className={`group-hover:visible ${isDropdownMenu ? 'visible' : 'invisible'} hover:bg-[#47484b] bg-opacity-55 btn-options absolute right-8 top-[50%]
+             translate-y-[-50%] w-[30px] h-[30px] flex items-center justify-center rounded-full text-[#b0b3b8] cursor-pointer bg-[#252323]`}
+              style={{ boxShadow: '0 0 2px white' }}>
+              <SlOptions size={13} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-80 z-[999] bg-[#272727] border-none text-white text-[15px]">
+            <DropdownMenuGroup>
+              <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+                <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                  <MailWarning />
+                </div>
+                <span>Đánh dấu là chưa đọc</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+                <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                  <Bell />
+                </div>
+                <span>Tắt thông báo</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+                <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                  <User />
+                </div>
+                <span>Xem trang cá nhân</span>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+
+            <DropdownMenuSeparator className="bg-[#47484b] bg-opacity-55" />
+
+            <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+              <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                <Phone />
+              </div>
+              <span>Gọi thoại</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+              <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                <Video />
+              </div>
+              <span>Chat video</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSeparator className="bg-[#47484b] bg-opacity-55" />
+
+            <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+              <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                <CircleMinus />
+              </div>
+              <span>Chặn</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+              <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                <Archive />
+              </div>
+              <span>Lưu trữ đoạn chat</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+              <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                <Trash />
+              </div>
+              <span>Xoá đoạn chat</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem className="cursor-pointer hover:!bg-[#47484b] bg-opacity-55 hover:!text-white">
+              <div className="flex w-7 h-7 p-[5px] items-center justify-center rounded-full text-[#dadada] cursor-pointer bg-[#47484b] bg-opacity-55">
+                <TriangleAlert />
+              </div>
+              <span>Báo cáo</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
