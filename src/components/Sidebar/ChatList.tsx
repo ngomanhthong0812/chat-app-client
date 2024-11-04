@@ -23,7 +23,19 @@ const ChatList: React.FC<IProps> = () => {
 
       try {
         const response = await axios.post('http://localhost:8080/api/chatList', data);
-        setChatList(response.data.chatList);
+        const resChatList: ChatItemType[] = response.data.chatList;
+
+        resChatList?.sort((a, b) => {
+          // Chuyển đổi sent_at từ string sang timestamp
+          const timeA = new Date(a.sent_at).getTime();
+          const timeB = new Date(b.sent_at).getTime();
+          return timeB - timeA;
+        });
+
+        setChatList(resChatList?.map((item, index) => {
+          return index === 0 ? { ...item, active: true } : { ...item, active: false };
+        }));
+
       } catch (error) {
         if (axios.isAxiosError(error) && error.response?.data) {
           const responseData = error.response.data;
@@ -32,7 +44,7 @@ const ChatList: React.FC<IProps> = () => {
       }
     };
     fetchData();
-  }, [user])
+  }, [user]);
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop } = event.currentTarget;
@@ -46,43 +58,57 @@ const ChatList: React.FC<IProps> = () => {
     console.log("tai thanh cong");
     setLoading(false);
   }
+  const handleActiveItem = (msg_id: number) => {
+    setChatList(
+      prev => {
+        return prev?.map(item => (
+          item.id === msg_id
+            ? { ...item, active: true }
+            : { ...item, active: false }
+        ))
+      }
+    )
+  }
   return (
     <div className={`mt-3 px-2 h-full scrollbar-custom ${onScroll && 'border-t border-[#484848]'}`}
       onScroll={handleScroll}>
-      {
-        (chatList?.length === 0 && !loading) &&
-        <div className="text-center text-[#b0b3b8] mt-10">
-          Không tìm thấy đoạn chat nào.
-        </div>
-      }
 
-      {loading && <div>
+      {(loading && chatList?.length !== 0) && <div>
         <SkeletonChat />
         <SkeletonChat />
         <SkeletonChat />
       </div>}
 
-      {chatList?.map((chat: ChatItemType) => (
-        <div key={chat.id} style={!loading ? { visibility: 'visible' } : { visibility: 'hidden' }}>
-          <ChatItem
-            avatar_url={chat.avatar_url}
-            chat_name={chat.chat_name}
-            id={chat.id}
-            user_id={chat.user_id}
-            chat_id={chat.chat_id}
-            group_id={chat.group_id}
-            content={chat.content}
-            image_url={chat.image_url}
-            video_url={chat.video_url}
-            file_url={chat.file_url}
-            sent_at={chat.sent_at}
-            seen_at={chat.seen_at}
-            is_read={chat.is_read}
-            sender_last_name={chat.sender_last_name}
-            sender_first_name={chat.sender_first_name}
-            handleSetLoading={handleSetLoading} />
+      {chatList?.length !== 0
+        ? chatList?.map((chat: ChatItemType) => (
+          <div key={chat.id} style={!loading ? { visibility: 'visible' } : { visibility: 'hidden' }}>
+            <ChatItem
+              avatar_url={chat.avatar_url}
+              chat_name={chat.chat_name}
+              id={chat.id}
+              user_id={chat.user_id}
+              chat_id={chat.chat_id}
+              group_id={chat.group_id}
+              content={chat.content}
+              image_url={chat.image_url}
+              video_url={chat.video_url}
+              file_url={chat.file_url}
+              sent_at={chat.sent_at}
+              seen_at={chat.seen_at}
+              is_read={chat.is_read}
+              sender_last_name={chat.sender_last_name}
+              sender_first_name={chat.sender_first_name}
+              participants={chat.participants}
+              participants_avatar_url={chat.participants_avatar_url}
+              active={chat.active}
+              handleSetLoading={handleSetLoading}
+              handleActiveItem={handleActiveItem} />
+          </div>
+        ))
+        : <div className="text-center text-[#b0b3b8] mt-10">
+          Không tìm thấy đoạn chat nào.
         </div>
-      ))}
+      }
 
     </div>
   );

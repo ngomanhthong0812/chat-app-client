@@ -14,7 +14,11 @@ interface ChatItemType {
     is_read: number;
     sender_last_name: string;
     sender_first_name: string;
+    participants: string;
+    participants_avatar_url: string;
+    active: boolean;
     handleSetLoading: () => void;
+    handleActiveItem: (msg_id: number) => void;
 }
 
 interface User {

@@ -75,8 +75,8 @@ const Home = () => {
         {/* sidebar */}
 
         {/* Chat Area */}
-        <div className="min-w-[60%] flex-1 flex gap-4 ">
-          <div className="flex-1 bg-[#47484b] bg-opacity-15 rounded-xl shadow-custom-light flex flex-col z-[99]">
+        <div className="w-[60%] flex-1 flex gap-4 ">
+          <div className="flex-1 min-w-[33%] bg-[#47484b] bg-opacity-15 rounded-xl shadow-custom-light flex flex-col z-[99]">
             <MessageList messages={messages} toggleChatInfo={toggleChatInfo} />
           </div>
 
