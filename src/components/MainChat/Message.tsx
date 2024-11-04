@@ -66,38 +66,38 @@ const Message: NextPage<Props> = ({
         </div>
       )}
       <div
-        className={`px-3 py-2 max-w-80 ${
-          isLongMessage ? "rounded-lg" : "rounded-full"
+        className={` max-w-80 ${
+          message_image_url
+            ? "rounded-lg"
+            : isLongMessage
+            ? "rounded-lg"
+            : "rounded-full"
         } ${
-          currentUserId == user_id
+          currentUserId === user_id
             ? "bg-blue-500 text-white text-sm"
             : "bg-opacity-100 bg-[#47484b] text-white text-sm"
         }`}
       >
-        <p>{message_content}</p>
         {message_image_url && (
           <img
             src={message_image_url}
             alt="message"
-            className="mt-2 rounded max-w-xs"
+            className=" rounded-t-lg w-auto" // Thay đổi className thành rounded-lg
           />
         )}
         {message_video_url && (
           <video
             controls
             src={message_video_url}
-            className="mt-2 rounded max-w-xs"
+            className=" rounded max-w-xs"
           />
         )}
         {message_file_url && (
-          <a
-            href={message_file_url}
-            download
-            className="mt-2 block text-blue-400"
-          >
+          <a href={message_file_url} download className="block text-blue-400">
             Download File
           </a>
         )}
+        <p className="px-3 py-1">{message_content}</p>
       </div>
 
       {currentUserId !== user_id && (

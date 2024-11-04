@@ -7,7 +7,6 @@ interface TokenPayload {
 
 export const getUserIdFromToken = (): number | null => {
     const token = localStorage.getItem("token"); // Hoặc từ cookies
-    console.log("token: ", token);
 
     if (token) {
         try {

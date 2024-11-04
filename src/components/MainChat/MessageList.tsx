@@ -43,7 +43,7 @@ const MessageList: NextPage<Props> = ({ toggleChatInfo }) => {
       try {
         const token = localStorage.getItem("token");
         const response = await axios.get(
-          `http://localhost:8080/api/messager/1/2`,
+          `http://localhost:8080/api/messager/1/${id_other}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -58,7 +58,7 @@ const MessageList: NextPage<Props> = ({ toggleChatInfo }) => {
           response.data.code === 200 &&
           Array.isArray(response.data.data.message)
         ) {
-          setRoomName(response.data.data.name_rom);
+          setRoomName(response.data.data.name_room);
           setAvatarUrl(response.data.data.avatar_url);
           setMessages(response.data.data.message); // Lấy mảng message từ dữ liệu
         } else {
