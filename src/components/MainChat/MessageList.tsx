@@ -5,8 +5,9 @@ import Message from "./Message";
 import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
 import { getUserIdFromToken } from "@/src/utils/auth";
-import { log } from "console";
 import { useActiveChat } from "@/src/context/ActiveChatContext";
+import useSocket from "@/src/hook/useSocket";
+import useUser from "@/src/hook/useUser";
 
 interface MessageData {
   user_id: number;
@@ -33,7 +34,7 @@ const MessageList: NextPage<Props> = ({
   const [roomName, setRoomName] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string>("");
   const { chatId, groupId } = useActiveChat();
-
+  const user = useUser();
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -111,7 +112,6 @@ const MessageList: NextPage<Props> = ({
           }
         }
       } catch (error) {
-        console.error("Error fetching messages:", error);
         if (axios.isAxiosError(error) && error.response?.status === 401) {
           console.warn("Authorization error: Invalid or expired token.");
         }
@@ -125,6 +125,20 @@ const MessageList: NextPage<Props> = ({
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  //socket
+  const { socket } = useSocket(user?.user_id, chatId, groupId);
+
+  useEffect(() => {
+    // Lắng nghe tin nhắn nhận được
+    socket.on('receive-message', (msg) => {
+      console.log("tin nhắn mess list" + JSON.stringify(msg));
+      setMessages(
+        prev => [...prev, msg.message]
+      )
+    });
+  }, [userId, groupId, chatId]);
+  //
 
   return (
     <div className="flex flex-col h-full">
