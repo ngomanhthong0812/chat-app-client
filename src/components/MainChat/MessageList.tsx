@@ -6,6 +6,7 @@ import MessageInput from "./MessageInput";
 import ChatHeader from "./ChatHeader";
 import { getUserIdFromToken } from "@/src/utils/auth";
 import { log } from "console";
+import { useActiveChat } from "@/src/context/ActiveChatContext";
 
 interface MessageData {
   user_id: number;
@@ -21,20 +22,18 @@ interface MessageData {
 
 interface Props {
   toggleChatInfo: () => void;
-  chat_id: number;
-  group_id: number;
 }
 
 const MessageList: NextPage<Props> = ({
-  toggleChatInfo,
-  chat_id,
-  group_id,
+  toggleChatInfo
 }) => {
   const messageEndRef = useRef<HTMLDivElement>(null);
   const [messages, setMessages] = useState<MessageData[]>([]); // Default to empty array
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [roomName, setRoomName] = useState<string>("");
   const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const { chatId, groupId } = useActiveChat();
+
 
   const token =
     typeof window !== "undefined" ? localStorage.getItem("token") : null;
@@ -47,10 +46,10 @@ const MessageList: NextPage<Props> = ({
 
     const fetchMessages = async () => {
       try {
-        if (chat_id >= 1) {
+        if (chatId) {
           const response = await axios.post(
             `http://localhost:8080/api/messagesprivate`,
-            { chat_id: chat_id },
+            { chat_id: chatId },
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -82,7 +81,7 @@ const MessageList: NextPage<Props> = ({
         } else {
           const response = await axios.post(
             `http://localhost:8080/api/groupmessages`,
-            { groupId: group_id },
+            { groupId: groupId },
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -120,7 +119,7 @@ const MessageList: NextPage<Props> = ({
     };
 
     fetchMessages();
-  }, [chat_id, group_id]);
+  }, [chatId, groupId]);
 
   // Scroll to the bottom when messages change
   useEffect(() => {

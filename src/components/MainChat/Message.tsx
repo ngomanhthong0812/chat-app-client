@@ -28,7 +28,7 @@ const Message: NextPage<Props> = ({
   currentUserId,
   avatar_url,
 }) => {
-  const isLongMessage = message_content.length > 50; // Giả sử tin nhắn dài nếu có hơn 50 ký tự
+  const isLongMessage = message_content?.length > 50; // Giả sử tin nhắn dài nếu có hơn 50 ký tự
 
   return (
     <div
