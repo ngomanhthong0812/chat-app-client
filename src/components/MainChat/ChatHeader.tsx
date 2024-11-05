@@ -17,8 +17,6 @@ const ChatHeader: NextPage<Props> = ({
   avatar_url,
 }) => {
   const [isActive, setIsActive] = useState(false); // State để theo dõi trạng thái
-  console.log("name room: " + name_room);
-
   const handleToggle = () => {
     setIsActive(!isActive); // Đảo trạng thái
     toggleChatInfo(); // Gọi hàm toggleChatInfo
