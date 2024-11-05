@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { SlOptions } from "react-icons/sl";
 import { CiImageOn } from "react-icons/ci";
 import { LuFileVideo } from "react-icons/lu";
@@ -27,7 +27,7 @@ import {
 
 import axios from "axios";
 import useUser from "@/src/hook/useUser";
-import { useActiveChat } from '@/src/context/ActiveChatContext';
+import useSocket from "@/src/hook/useSocket";
 
 const ChatItem: React.FC<ChatItemType> = ({
   id, // => id message
@@ -57,7 +57,13 @@ const ChatItem: React.FC<ChatItemType> = ({
   const [activeStatus, setActiveStatus] = useState<boolean>(true);
   const [isDropdownMenu, setIsDropdownMenu] = useState<boolean>(false);
 
-  const timeSentAt = calculateTimeDifference(sent_at);
+  const { socket } = useSocket(user?.user_id, chat_id, group_id);
+  const [messageDetails, setMessageDetails] = useState({
+    contentNew: content,
+    sentAtNew: sent_at,
+    senderName: `${sender_first_name} ${sender_last_name}`,
+    senderId: user_id,
+  });
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,11 +94,11 @@ const ChatItem: React.FC<ChatItemType> = ({
   }, [user])
 
   function calculateTimeDifference(pastDateStr: string): string {
-    const pastDate: any = new Date(pastDateStr);
-    const currentDate: any = new Date();
+    const pastDate: Date = new Date(pastDateStr);
+    const currentDate: Date = new Date();
 
     // Tính toán sự khác biệt tính theo milliseconds
-    const timeDifference = currentDate - pastDate;
+    const timeDifference = currentDate.getTime() - pastDate.getTime();
 
     // Chuyển đổi milliseconds thành seconds, minutes, hours, days
     const seconds = Math.floor(timeDifference / 1000);
@@ -100,28 +106,28 @@ const ChatItem: React.FC<ChatItemType> = ({
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
 
-    if (days) {
+    if (days > 0) {
       return `${days} ngày`;
     }
-    if (hours) {
+    if (hours > 0) {
       return `${hours} giờ`;
     }
-    if (minutes) {
+    if (minutes > 0) {
       return `${minutes} phút`;
     }
-    if (seconds) {
-      return `${seconds} giây`;
+    if (seconds >= 0) {
+      return `${seconds + 1} giây`;
     }
 
     return '';
   }
 
-  const setViewContent = (): JSX.Element => {
-    if (image_url && content) {
-      return <span className="flex gap-1"> <CiImageOn size={17} />{content}</span>
+  const setViewContent = useMemo((): JSX.Element => {
+    if (image_url && messageDetails.contentNew) {
+      return <span className="flex gap-1"> <CiImageOn size={17} />{messageDetails.contentNew}</span>
     }
-    if (content) {
-      return <span className="flex gap-1">{content}</span>
+    if (messageDetails.contentNew) {
+      return <span className="flex gap-1">{messageDetails.contentNew}</span>
     }
     if (image_url) {
       return <span className="flex gap-1"><CiImageOn size={17} /> Hình ảnh</span>
@@ -134,8 +140,27 @@ const ChatItem: React.FC<ChatItemType> = ({
     }
     return (
       <span></span>
-    );
-  }
+    )
+  }, [image_url, messageDetails.contentNew, video_url, file_url]);
+
+
+  useEffect(() => {
+    // Lắng nghe tin nhắn nhận được
+    socket.on('receive-message', (msg) => {
+      console.log("tin nhắn " + JSON.stringify(msg));
+      setMessageDetails({
+        contentNew: msg.message.message_content,
+        sentAtNew: msg.message.message_sent_at,
+        senderName: msg.message.sender_name,
+        senderId: msg.message.user_id,
+      });
+    });
+
+    return () => {
+      socket?.disconnect();
+    };
+  }, [user?.user_id, chat_id, group_id]);
+
 
   return (
     <div onClick={() => handleActiveItem(id, chat_id, group_id)}>
@@ -155,11 +180,11 @@ const ChatItem: React.FC<ChatItemType> = ({
           <div className="text-[12.5px] font-[500] text-[#b0b3b8] flex">
             <p className="max-w-[200px] truncate">
               <span className="flex gap-1">
-                {user_id === user?.user_id ? 'Bạn' : sender_last_name}:
-                {setViewContent()}
+                {messageDetails.senderId === user?.user_id ? 'Bạn' : messageDetails.senderName}:
+                {setViewContent}
               </span>
             </p>
-            <span className="ml-1">. {timeSentAt}</span></div>
+            <span className="ml-1">. {calculateTimeDifference(messageDetails.sentAtNew)}</span></div>
         </div>
         <DropdownMenu onOpenChange={() => setIsDropdownMenu(!isDropdownMenu)}>
           <DropdownMenuTrigger asChild>
