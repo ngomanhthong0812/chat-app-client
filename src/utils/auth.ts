@@ -11,7 +11,6 @@ export const getUserIdFromToken = (): number | null => {
     if (token) {
         try {
             const decoded: TokenPayload = jwtDecode(token); // Sử dụng jwtDecode
-            console.log("decoded: ", decoded.userId);
             return decoded.userId; // Trả về user ID từ token
         } catch (error) {
             console.error("Không thể giải mã token: ", error);
