@@ -36,7 +36,12 @@ const ChatList: React.FC<IProps> = () => {
         });
 
         setChatList(resChatList?.map((item, index) => {
-          return index === 0 ? { ...item, active: true } : { ...item, active: false };
+          if (index === 0) {
+            setChatId(item.chat_id);
+            setGroupId(item.group_id);
+            return { ...item, active: true };
+          }
+          return { ...item, active: false };
         }));
 
       } catch (error) {

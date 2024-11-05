@@ -56,15 +56,8 @@ const ChatItem: React.FC<ChatItemType> = ({
 
   const [activeStatus, setActiveStatus] = useState<boolean>(true);
   const [isDropdownMenu, setIsDropdownMenu] = useState<boolean>(false);
-  const { chatId, groupId } = useActiveChat();
 
   const timeSentAt = calculateTimeDifference(sent_at);
-
-  useEffect(() => {
-    console.log(chatId);
-    console.log(groupId);
-
-  }, [chatId, groupId]);
 
   useEffect(() => {
     const fetchData = async () => {
