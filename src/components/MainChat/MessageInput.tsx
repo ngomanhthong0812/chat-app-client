@@ -33,7 +33,7 @@ const MessageInput: NextPage<Props> = ({ }) => {
   const handleSendMessage = () => {
     if (!message.message_content.trim()) return;
 
-    socket.emit('send-message', {
+    socket?.emit('send-message', {
       room: roomId,
       message: {
         user_id: user?.user_id,

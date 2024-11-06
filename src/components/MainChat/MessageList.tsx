@@ -131,7 +131,7 @@ const MessageList: NextPage<Props> = ({
 
   useEffect(() => {
     // Lắng nghe tin nhắn nhận được
-    socket.on('receive-message', (msg) => {
+    socket?.on('receive-message', (msg) => {
       console.log("tin nhắn mess list" + JSON.stringify(msg));
       setMessages(
         prev => [...prev, msg.message]
