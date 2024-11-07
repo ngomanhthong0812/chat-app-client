@@ -19,6 +19,7 @@ interface ChatItemType {
     active: boolean;
     handleSetLoading: () => void;
     handleActiveItem: (msg_id: number, chat_id: number | null, group_id: number | null) => void;
+    handleReceiveMessage: (any) => void;
 }
 
 interface User {

@@ -49,7 +49,8 @@ const ChatItem: React.FC<ChatItemType> = ({
   participants_avatar_url,
   active,
   handleSetLoading,
-  handleActiveItem }) => {
+  handleActiveItem,
+  handleReceiveMessage }) => {
 
   // lấy ra thông tin người dùng
   const user = useUser();
@@ -155,7 +156,6 @@ const ChatItem: React.FC<ChatItemType> = ({
     const roomIdItem = chat_id ? `chat:${chat_id}` : group_id ? `group:${group_id}` : null;
     socket?.emit('join-room', roomIdItem);
     socket?.on('receive-message', (msg) => {
-      console.log("tin nhắn " + JSON.stringify(msg));
       setMessageDetails({
         contentNew: msg.message.message_content,
         sentAtNew: msg.message.message_sent_at,
@@ -165,6 +165,7 @@ const ChatItem: React.FC<ChatItemType> = ({
         senderVideoUrl: msg.message_video_url,
         senderFileUrl: msg.message_file_url,
       });
+      handleReceiveMessage(msg);
     });
 
     return () => {

@@ -37,6 +37,8 @@ const MessageInput: NextPage<Props> = ({ }) => {
       room: roomId,
       message: {
         user_id: user?.user_id,
+        chat_id: chatId,
+        group_id: groupId,
         sender_name: `${user?.first_name} ${user?.last_name}`,
         message_id: uuid(),
         message_content: message.message_content,
