@@ -6,6 +6,7 @@ import axios from "axios";
 import useUser from "@/src/hook/useUser";
 
 import { useActiveChat } from '@/src/context/ActiveChatContext';
+import useSocket from "@/src/hook/useSocket";
 
 interface IProps { }
 
@@ -13,9 +14,11 @@ const ChatList: React.FC<IProps> = () => {
   const [onScroll, setOnScroll] = useState<boolean>(false);
   const [chatList, setChatList] = useState<ChatItemType[]>();
   const [loading, setLoading] = useState<boolean>(true);
-  const { setChatId, setGroupId } = useActiveChat();
+  const { setChatId, setGroupId, chatId, groupId } = useActiveChat();
+  const [receiveMessage, setReceiveMessage] = useState<any>();
 
   const user = useUser();
+  const { socket } = useSocket(user?.user_id, chatId, groupId);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,7 +55,7 @@ const ChatList: React.FC<IProps> = () => {
       }
     };
     fetchData();
-  }, [user]);
+  }, [user, receiveMessage]);
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop } = event.currentTarget;
@@ -79,6 +82,10 @@ const ChatList: React.FC<IProps> = () => {
 
     setChatId(chat_id);
     setGroupId(group_id);
+  }
+
+  const handleReceiveMessage = (message: any) => {
+    setReceiveMessage(message);
   }
 
   return (
@@ -114,7 +121,8 @@ const ChatList: React.FC<IProps> = () => {
               participants_avatar_url={chat.participants_avatar_url}
               active={chat.active}
               handleSetLoading={handleSetLoading}
-              handleActiveItem={handleActiveItem} />
+              handleActiveItem={handleActiveItem}
+              handleReceiveMessage={handleReceiveMessage} />
           </div>
         ))
         : <div className="text-center text-[#b0b3b8] mt-10">

@@ -49,7 +49,8 @@ const ChatItem: React.FC<ChatItemType> = ({
   participants_avatar_url,
   active,
   handleSetLoading,
-  handleActiveItem }) => {
+  handleActiveItem,
+  handleReceiveMessage }) => {
 
   // lấy ra thông tin người dùng
   const user = useUser();
@@ -60,6 +61,9 @@ const ChatItem: React.FC<ChatItemType> = ({
   const { socket } = useSocket(user?.user_id, chat_id, group_id);
   const [messageDetails, setMessageDetails] = useState({
     contentNew: content,
+    senderImageUrl: image_url,
+    senderVideoUrl: video_url,
+    senderFileUrl: file_url,
     sentAtNew: sent_at,
     senderName: `${sender_first_name} ${sender_last_name}`,
     senderId: user_id,
@@ -94,6 +98,9 @@ const ChatItem: React.FC<ChatItemType> = ({
   }, [user])
 
   function calculateTimeDifference(pastDateStr: string): string {
+    if (!pastDateStr) {
+      return '';
+    }
     const pastDate: Date = new Date(pastDateStr);
     const currentDate: Date = new Date();
 
@@ -123,37 +130,42 @@ const ChatItem: React.FC<ChatItemType> = ({
   }
 
   const setViewContent = useMemo((): JSX.Element => {
-    if (image_url && messageDetails.contentNew) {
-      return <span className="flex gap-1"> <CiImageOn size={17} />{messageDetails.contentNew}</span>
+    if (messageDetails.senderImageUrl && messageDetails.contentNew) {
+      return <span className="flex gap-1"> <CiImageOn size={17} /><span className="line-clamp-1 max-w-[50px] lg:max-w-[200px]">{messageDetails.contentNew}</span></span>
     }
     if (messageDetails.contentNew) {
-      return <span className="flex gap-1">{messageDetails.contentNew}</span>
+      return <span className="flex gap-1"><span className="line-clamp-1 max-w-[30px] lg:max-w-[150px]">{messageDetails.contentNew}</span></span>
     }
-    if (image_url) {
+    if (messageDetails.senderImageUrl) {
       return <span className="flex gap-1"><CiImageOn size={17} /> Hình ảnh</span>
     }
-    if (video_url) {
+    if (messageDetails.senderVideoUrl) {
       return <span className="flex gap-1"><LuFileVideo size={17} /> Video</span>
     }
-    if (file_url) {
+    if (messageDetails.senderFileUrl) {
       return <span className="flex gap-1"><CiFileOn size={17} /> File</span>
     }
     return (
       <span></span>
     )
-  }, [image_url, messageDetails.contentNew, video_url, file_url]);
+  }, [messageDetails.senderImageUrl, messageDetails.contentNew, messageDetails.senderVideoUrl, messageDetails.senderFileUrl]);
 
 
   useEffect(() => {
     // Lắng nghe tin nhắn nhận được
-    socket.on('receive-message', (msg) => {
-      console.log("tin nhắn " + JSON.stringify(msg));
+    const roomIdItem = chat_id ? `chat:${chat_id}` : group_id ? `group:${group_id}` : null;
+    socket?.emit('join-room', roomIdItem);
+    socket?.on('receive-message', (msg) => {
       setMessageDetails({
         contentNew: msg.message.message_content,
         sentAtNew: msg.message.message_sent_at,
         senderName: msg.message.sender_name,
         senderId: msg.message.user_id,
+        senderImageUrl: msg.message_image_url,
+        senderVideoUrl: msg.message_video_url,
+        senderFileUrl: msg.message_file_url,
       });
+      handleReceiveMessage(msg);
     });
 
     return () => {
@@ -175,16 +187,14 @@ const ChatItem: React.FC<ChatItemType> = ({
           />
           {activeStatus && <span className="absolute right-[1px] bottom-0 w-[14px] h-[14px] bg-green-600 rounded-full border-2 border-[#252323]"></span>}
         </div>
-        <div className="mt-[2px] truncate">
-          <h3 className="text-white font-[500] text-[15px] truncate max-w-[200px]">{chat_id ? participants : chat_name}</h3>
+        <div className="mt-[2px]">
+          <h3 className="text-white font-[500] text-[15px]">{chat_id ? participants : chat_name}</h3>
           <div className="text-[12.5px] font-[500] text-[#b0b3b8] flex">
-            <p className="max-w-[200px] truncate">
-              <span className="flex gap-1">
-                {messageDetails.senderId === user?.user_id ? 'Bạn' : messageDetails.senderName}:
-                {setViewContent}
-              </span>
-            </p>
-            <span className="ml-1">. {calculateTimeDifference(messageDetails.sentAtNew)}</span></div>
+            <span className="flex gap-1">
+              {messageDetails.senderId ? (messageDetails.senderId === user?.user_id ? 'Bạn' : messageDetails.senderName) + ':' : 'Hãy bắt đầu đoạn chat'}
+              {setViewContent}
+            </span>
+            <span className="ml-1 whitespace-nowrap">. {calculateTimeDifference(messageDetails.sentAtNew)}</span></div>
         </div>
         <DropdownMenu onOpenChange={() => setIsDropdownMenu(!isDropdownMenu)}>
           <DropdownMenuTrigger asChild>
@@ -261,7 +271,7 @@ const ChatItem: React.FC<ChatItemType> = ({
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-    </div>
+    </div >
   );
 }
 export default ChatItem;
